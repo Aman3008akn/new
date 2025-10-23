@@ -1,3 +1,6 @@
 [build]
   command = "cd frontend && yarn build"
   publish = "frontend/build"
+
+[build.environment]
+  NPM_FLAGS = "--force"
