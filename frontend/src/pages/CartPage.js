@@ -4,6 +4,7 @@ import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { axiosInstance } from '../App';
 import { toast } from 'sonner';
+import { formatCurrency } from '../lib/currency';
 
 export default function CartPage({ onUpdate }) {
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ export default function CartPage({ onUpdate }) {
                         {item.variant?.sku} - {Object.values(item.variant?.attributes || {}).join(' / ')}
                       </p>
                       <p className="text-lg font-bold" data-testid="cart-item-price">
-                        ${item.price}
+                        {formatCurrency(item.price)}
                       </p>
                     </div>
 
@@ -138,7 +139,7 @@ export default function CartPage({ onUpdate }) {
                       </div>
 
                       <p className="text-lg font-bold" data-testid="cart-item-total">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatCurrency(item.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -154,23 +155,23 @@ export default function CartPage({ onUpdate }) {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium" data-testid="cart-subtotal">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium" data-testid="cart-subtotal">{formatCurrency(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Shipping</span>
                     <span className="font-medium">
-                      {subtotal >= 100 ? 'FREE' : '$10.00'}
+                      {subtotal >= 100 ? 'FREE' : formatCurrency(10)}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax (10%)</span>
-                    <span className="font-medium">${(subtotal * 0.1).toFixed(2)}</span>
+                    <span className="font-medium">{formatCurrency(subtotal * 0.1)}</span>
                   </div>
                   <div className="border-t pt-3">
                     <div className="flex justify-between text-xl font-bold">
                       <span>Total</span>
                       <span data-testid="cart-total">
-                        ${(subtotal + (subtotal >= 100 ? 0 : 10) + subtotal * 0.1).toFixed(2)}
+                        {formatCurrency(subtotal + (subtotal >= 100 ? 0 : 10) + subtotal * 0.1)}
                       </span>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from './ui/button';
+import { formatCurrency } from '../lib/currency';
 
 export default function ProductCard({ product, variant, onAddToCart }) {
   const displayVariant = variant || product.variants?.[0];
@@ -34,11 +35,11 @@ export default function ProductCard({ product, variant, onAddToCart }) {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-2xl font-bold text-gray-900" data-testid="product-price">
-                ${displayVariant.price}
+                {formatCurrency(displayVariant.price)}
               </span>
               {displayVariant.compare_at_price && (
                 <span className="text-sm text-gray-500 line-through ml-2">
-                  ${displayVariant.compare_at_price}
+                  {formatCurrency(displayVariant.compare_at_price)}
                 </span>
               )}
             </div>

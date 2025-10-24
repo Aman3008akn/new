@@ -97,16 +97,55 @@ Get keys from: https://dashboard.stripe.com/apikeys
 
 ## 🚦 Quick Start
 
-1. Services are already running
-2. Visit the homepage
-3. Login with admin/customer credentials above
-4. Explore products, add to cart, or manage via admin dashboard
+### Local Development
+
+1. **Backend:**
+   ```bash
+   cd backend
+   python -m uvicorn server:app --reload --host 127.0.0.1 --port 8000
+   ```
+
+2. **Frontend:**
+   ```bash
+   cd frontend
+   yarn install
+   yarn start
+   ```
+
+3. Visit http://localhost:3000 (or 3001 if 3000 is in use)
+4. Login with admin/customer credentials above
+5. Explore products, add to cart, or manage via admin dashboard
+
+### Production Deployment
+
+**Quick Deploy to Netlify + Railway:**
+
+See detailed guides:
+- 📖 [**NETLIFY-DEPLOY.md**](./NETLIFY-DEPLOY.md) - Step-by-step deployment guide (Recommended)
+- 📖 [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Comprehensive deployment options
+
+**One-line summary:**
+1. Deploy backend on [Railway](https://railway.app) (free tier)
+2. Deploy frontend on [Netlify](https://netlify.com) (free tier)
+3. Database on [MongoDB Atlas](https://mongodb.com/cloud/atlas) (free tier)
+
+**Time needed:** ~30-45 minutes for complete deployment
 
 ## 📈 MVP Completion Status
 
 **Backend:** ✅ 100% Complete
 **Frontend:** ✅ 100% Complete
 **Testing:** ✅ Verified
+**Deployment:** ✅ Ready for Production
+
+### Deployment Files Included
+
+- `netlify.toml` - Netlify configuration for frontend
+- `backend/Procfile` - Backend deployment configuration
+- `backend/runtime.txt` - Python version specification
+- `backend/railway.json` - Railway configuration
+- `NETLIFY-DEPLOY.md` - Step-by-step deployment guide
+- `DEPLOYMENT.md` - Comprehensive deployment documentation
 
 ## 🎯 Future Roadmap
 

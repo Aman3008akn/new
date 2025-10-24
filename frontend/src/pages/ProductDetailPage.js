@@ -4,6 +4,7 @@ import { ShoppingCart, Minus, Plus } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { axiosInstance } from '../App';
 import { toast } from 'sonner';
+import { formatCurrency } from '../lib/currency';
 
 export default function ProductDetailPage({ user, onCartUpdate, onShowAuth }) {
   const { id } = useParams();
@@ -122,7 +123,7 @@ export default function ProductDetailPage({ user, onCartUpdate, onShowAuth }) {
                       data-testid="variant-option"
                     >
                       {Object.values(variant.attributes).join(' / ')}
-                      <span className="ml-2 text-sm">${variant.price}</span>
+                      <span className="ml-2 text-sm">{formatCurrency(variant.price)}</span>
                     </button>
                   ))}
                 </div>
@@ -134,11 +135,11 @@ export default function ProductDetailPage({ user, onCartUpdate, onShowAuth }) {
               <div className="space-y-2">
                 <div className="flex items-baseline gap-3">
                   <span className="text-4xl font-bold" data-testid="product-detail-price">
-                    ${selectedVariant.price}
+                    {formatCurrency(selectedVariant.price)}
                   </span>
                   {selectedVariant.compare_at_price && (
                     <span className="text-xl text-gray-500 line-through">
-                      ${selectedVariant.compare_at_price}
+                      {formatCurrency(selectedVariant.compare_at_price)}
                     </span>
                   )}
                 </div>

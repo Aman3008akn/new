@@ -8,6 +8,7 @@ import { axiosInstance } from '../App';
 import { toast } from 'sonner';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { formatCurrency } from '../lib/currency';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY || 'pk_test_dummy');
 
@@ -105,10 +106,38 @@ function CheckoutForm() {
     }
   };
 
+  const [discount, setDiscount] = useState(0);
+
+  const applyCoupon = async () => {
+    if (!couponCode) {
+      setDiscount(0);
+      toast.info('Coupon code cleared');
+      return;
+    }
+    try {
+      const { data } = await axiosInstance.get(`/coupons/validate/${couponCode}`);
+      let calculatedDiscount = 0;
+      const currentSubtotal = calculateSubtotal(); // Use current subtotal for calculation
+      if (data.type === 'percentage') {
+        calculatedDiscount = currentSubtotal * (data.value / 100);
+        if (data.max_discount) {
+          calculatedDiscount = Math.min(calculatedDiscount, data.max_discount);
+        }
+      } else {
+        calculatedDiscount = data.value;
+      }
+      setDiscount(calculatedDiscount);
+      toast.success(`Coupon "${couponCode}" applied!`);
+    } catch (error) {
+      setDiscount(0);
+      toast.error(error.response?.data?.detail || 'Invalid coupon code');
+    }
+  };
+
   const subtotal = calculateSubtotal();
   const shipping = subtotal >= 100 ? 0 : 10;
-  const tax = subtotal * 0.1;
-  const total = subtotal + shipping + tax;
+  const tax = (subtotal - discount) * 0.1; // Tax after discount
+  const total = subtotal - discount + shipping + tax;
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8" data-testid="checkout-page">
@@ -231,7 +260,15 @@ function CheckoutForm() {
                     onChange={(e) => setCouponCode(e.target.value)}
                     data-testid="coupon-input"
                   />
+                  <Button type="button" onClick={applyCoupon} data-testid="apply-coupon-button">
+                    Apply
+                  </Button>
                 </div>
+                {discount > 0 && (
+                  <p className="text-green-600 text-sm mt-2" data-testid="coupon-discount-message">
+                    Discount applied: {formatCurrency(discount)}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -246,29 +283,35 @@ function CheckoutForm() {
                       <span className="text-gray-600">
                         {item.product?.title} x {item.quantity}
                       </span>
-                      <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                      <span className="font-medium">{formatCurrency(item.price * item.quantity)}</span>
                     </div>
                   ))}
                   
                   <div className="border-t pt-3 space-y-2">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
-                      <span className="font-medium" data-testid="checkout-subtotal">${subtotal.toFixed(2)}</span>
+                      <span className="font-medium" data-testid="checkout-subtotal">{formatCurrency(subtotal)}</span>
                     </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span className="text-gray-600">Discount</span>
+                        <span className="font-medium" data-testid="checkout-discount">-{formatCurrency(discount)}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-gray-600">Shipping</span>
-                      <span className="font-medium">{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                      <span className="font-medium">{shipping === 0 ? 'FREE' : formatCurrency(shipping)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax</span>
-                      <span className="font-medium">${tax.toFixed(2)}</span>
+                      <span className="font-medium">{formatCurrency(tax)}</span>
                     </div>
                   </div>
                   
                   <div className="border-t pt-3">
                     <div className="flex justify-between text-xl font-bold">
                       <span>Total</span>
-                      <span data-testid="checkout-total">${total.toFixed(2)}</span>
+                      <span data-testid="checkout-total">{formatCurrency(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -280,7 +323,7 @@ function CheckoutForm() {
                   disabled={!stripe || loading}
                   data-testid="place-order-button"
                 >
-                  {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                  {loading ? 'Processing...' : `Pay ${formatCurrency(total)}`}
                 </Button>
               </div>
             </div>

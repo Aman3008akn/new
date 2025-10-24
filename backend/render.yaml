@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: shopyy-backend
+    env: python
+    region: oregon
+    plan: free  # Options: free, starter ($7), standard ($25)
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /docs
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DB_NAME
+        value: ecommerce_db
+      - key: PORT
+        value: 8000
+      # Add these secrets via Render dashboard:
+      # - MONGO_URL
+      # - JWT_SECRET
+      # - STRIPE_SECRET_KEY
+      # - CORS_ORIGINS

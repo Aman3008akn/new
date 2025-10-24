@@ -1,0 +1,35 @@
+[build]
+  # Directory with the source code
+  base = "frontend/"
+  
+  # Build command
+  command = "yarn build"
+  
+  # Directory that will be deployed (contains the static files)
+  publish = "build"
+
+# Redirect all requests to index.html for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables (you'll set these in Netlify dashboard)
+[build.environment]
+  NODE_VERSION = "22"
+  YARN_VERSION = "1.22.22"
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Cache static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
