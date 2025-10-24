@@ -5,4 +5,3 @@
 [build.environment]
   YARN_VERSION = "1.22.22"
   NPM_FLAGS = "--force"
-  PATH = "$PATH:$(pwd)/frontend/node_modules/.bin"
