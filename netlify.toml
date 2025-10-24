@@ -3,4 +3,5 @@
   publish = "frontend/build"
 
 [build.environment]
+  YARN_VERSION = "1.22.22"
   NPM_FLAGS = "--force"
